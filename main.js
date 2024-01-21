@@ -9,8 +9,8 @@ const agregarTarea = () => {
   if (nuevaTarea) {
     const tarea = { tarea: nuevaTarea, completada: false };
 
-    // Agregar tarea al arreglo
-    tareas.push(tarea);
+    // Agregar tarea al principio del arreglo
+    tareas.unshift(tarea);
 
     // Actualizar la lista en el DOM
     actualizarLista();
@@ -29,8 +29,52 @@ const agregarTarea = () => {
 // Función para eliminar una tarea
 const eliminarTarea = (indice) => {
   if (indice >= 0 && indice < tareas.length) {
-    // Eliminar la tarea del arreglo
-    tareas.splice(indice, 1);
+    Swal.fire({
+      title: "¿Desear eliminar la tarea?",
+      text: "Recuerda que esta acción no la podrás deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si borrar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Eliminar la tarea del arreglo
+        tareas.splice(indice, 1);
+
+        Swal.fire({
+          title: "¡Borrada!",
+          text: "Tu tarea ha sido eliminada",
+          icon: "success"
+        });
+
+        // Actualizar la lista en el DOM
+        actualizarLista();
+
+        // Actualizar el LocalStorage
+        actualizarLocalStorage();
+      }
+    });
+  }
+};
+
+// Función para marcar una tarea como hecha
+const marcarComoHecha = (indice) => {
+  if (indice >= 0 && indice < tareas.length) {
+    // Marcar la tarea como completada
+    tareas[indice].completada = true;
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Tarea completada',
+      text: 'Estas a un paso de ser Elon Musk',
+      showConfirmButton: false,
+      timer: 1000
+    });
+
+    // Mover la tarea al final de la lista
+    const tareaCompleta = tareas.splice(indice, 1)[0];
+    tareas.push(tareaCompleta);
 
     // Actualizar la lista en el DOM
     actualizarLista();
@@ -40,28 +84,14 @@ const eliminarTarea = (indice) => {
   }
 };
 
-// Función para marcar una tarea como hecha
-const marcarComoHecha = (indice) => {
-  if (indice >= 0 && indice < tareas.length) {
-      // Marcar la tarea como completada
-      tareas[indice].completada = true;
-
-      // Mover la tarea al final de la lista
-      const tareaCompleta = tareas.splice(indice, 1)[0];
-      tareas.push(tareaCompleta);
-
-      // Actualizar la lista en el DOM
-      actualizarLista();
-
-      // Actualizar el LocalStorage
-      actualizarLocalStorage();
-  }
-};
-
 // Función para mostrar las tareas
 const mostrarTareas = () => {
   if (tareas.length === 0) {
-    alert("Aún no has ingresado ninguna tarea.");
+    Swal.fire({
+      icon: 'info',
+      title: 'Oops...',
+      text: 'Aún no has ingresado ninguna tarea.'
+    });
   } else {
     // Actualizar la lista en el DOM
     actualizarLista();
@@ -73,48 +103,48 @@ const mostrarTareas = () => {
 
 // Función para actualizar la lista en el DOM
 const actualizarLista = () => {
-    const listaTareas = document.getElementById("listaTareas");
-    listaTareas.innerHTML = "";
+  const listaTareas = document.getElementById("listaTareas");
+  listaTareas.innerHTML = "";
 
-    const ul = document.createElement("ul");
+  const ul = document.createElement("ul");
 
-    tareas.forEach((tarea, indice) => {
-        const li = document.createElement("li");
+  tareas.forEach((tarea, indice) => {
+    const li = document.createElement("li");
 
-        li.textContent = `${tarea.tarea}`;
+    li.textContent = `${tarea.tarea}`;
 
-        const buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("button-container");
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("button-container");
 
-        const botonEliminar = document.createElement("button");
-        botonEliminar.textContent = "Eliminar";
-        botonEliminar.classList.add("delete");
-        botonEliminar.onclick = () => eliminarTarea(indice);
+    const botonEliminar = document.createElement("button");
+    botonEliminar.textContent = "Eliminar";
+    botonEliminar.classList.add("delete");
+    botonEliminar.onclick = () => eliminarTarea(indice);
 
-        const botonHecha = document.createElement("button");
-        botonHecha.textContent = "Hecha";
-        botonHecha.classList.add("done");
-        botonHecha.onclick = () => {
-            marcarComoHecha(indice);
-            li.classList.add("completed");
-            actualizarMensajes();
-        };
+    const botonHecha = document.createElement("button");
+    botonHecha.textContent = "Hecha";
+    botonHecha.classList.add("done");
+    botonHecha.onclick = () => {
+      marcarComoHecha(indice);
+      li.classList.add("completed");
+      actualizarMensajes();
+    };
 
-        buttonContainer.appendChild(botonEliminar);
-        buttonContainer.appendChild(botonHecha);
+    buttonContainer.appendChild(botonEliminar);
+    buttonContainer.appendChild(botonHecha);
 
-        li.appendChild(buttonContainer);
+    li.appendChild(buttonContainer);
 
-        if (tarea.completada) {
-            li.classList.add("completed");
-        }
+    if (tarea.completada) {
+      li.classList.add("completed");
+    }
 
-        ul.appendChild(li);
-    });
+    ul.appendChild(li);
+  });
 
-    listaTareas.appendChild(ul);
+  listaTareas.appendChild(ul);
 
-    actualizarMensajes();
+  actualizarMensajes();
 };
 
 // Función para actualizar los mensajes
@@ -127,9 +157,9 @@ const actualizarMensajes = () => {
   const mensaje = document.createElement("p");
 
   if (tareasHechas > 0) {
-      mensaje.textContent = `¡Buena! Ya has completado ${tareasHechas} tarea${tareasHechas !== 1 ? 's' : ''} hoy.`;
+    mensaje.textContent = `¡Buena! Ya has completado ${tareasHechas} tarea${tareasHechas !== 1 ? 's' : ''} hoy.`;
   } else {
-      mensaje.textContent = "¡Lo siento! Aún no has hecho nada útil.";
+    mensaje.textContent = "¡Lo siento! Aún no has hecho nada útil.";
   }
 
   mensajeContainer.appendChild(mensaje);

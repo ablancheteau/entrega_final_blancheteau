@@ -133,3 +133,8 @@ li button:hover, button.delete:hover {
     font-size: 18px;
     font-weight: 900;
 }
+
+Swal.fire {
+    padding: 50px;
+    position: center;
+}
