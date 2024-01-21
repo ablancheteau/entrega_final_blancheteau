@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Qué tareas tienes pendiente?</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <h1>Mis tareas pendienes para hoy</h1>
+    <div id="mensajeContainer"></div>
+    <form id="formulario">
+        <label for="nuevaTarea">Nueva Tarea:</label>
+        <input type="text" id="nuevaTarea" name="nuevaTarea" required>
+        <button type="button" onclick="agregarTarea()">Agregar tarea</button>
+        <button type="button" onclick="mostrarTareas()">Mostrar tareas</button>
+    </form>
+    <ul id="listaTareas" class="tareas-container"></ul>
+    <div id="climaContainer">
+        <div id="climaIconContainer">
+            <img id="climaIcon" src="" alt="Icono del clima">
+        </div>
+        <div id="climaTextoContainer">
+            <p id="temperaturaTexto">Temperatura actual en Santiago de Chile:</p>
+            <h2 id="temperatura">°C</h2>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
